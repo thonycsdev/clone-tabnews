@@ -5,7 +5,7 @@ function Home() {
     return(
     <main>
         <button onClick={() => setIsShown(!isShown)}>Palloma, Clique Aqui!!</button>
-        {isShown ? <h1>EU TE AMO DEMAIS, VOCE EH O AMOR DA MINHA VIDA!!</h1> : <h1>Clica ai</h1>}
+        {isShown ? <h1>EU TE AMO DEMAIS, VOCE EH O AMOR DA MINHA VIDA!!</h1> : <h1>Pallominha, clique aqui novamente!</h1>}
     </main>
     );
 }
