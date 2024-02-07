@@ -9,7 +9,7 @@ async function query(queryObject) {
     database: process.env.POSTGRES_DB,
   });
   console.log(
-    "Database Connection Data",
+    "Database Connection",
     process.env.POSTGRES_HOST,
     process.env.POSTGRES_PORT,
     process.env.POSTGRES_USER,
