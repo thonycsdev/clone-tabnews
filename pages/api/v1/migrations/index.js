@@ -3,6 +3,7 @@ import path from "node:path";
 import NodePGMigrate from "node-pg-migrate";
 async function migrations(request, response) {
   const dbClient = await database.getNewClient();
+
   const nodePGMigrateDefaultConfiguration = {
     dbClient: dbClient,
     dir: path.join("infra", "migrations"),
