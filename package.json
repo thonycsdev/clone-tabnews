@@ -4,7 +4,7 @@
   "description": "Conteúdos para quem trabalha com tecnologia. Clone feito acompanhando o curso.dev",
   "main": "index.js",
   "scripts": {
-    "dev": "npm run services:up && npm run migrations:up && next dev",
+    "dev": "npm run services:up && npm run wait-for-postgres && npm run migrations:up && next dev",
     "services:up": "docker compose -f infra/compose.yaml up -d",
     "services:stop": "docker compose -f infra/compose.yaml stop",
     "services:down": "docker compose -f infra/compose.yaml down",
@@ -13,7 +13,8 @@
     "test": "jest --runInBand",
     "test:watch": "jest --watch --runInBand",
     "migrations:create": "node-pg-migrate --migrations-dir infra/migrations create",
-    "migrations:up": "node-pg-migrate -m infra/migrations --envPath .env.development up"
+    "migrations:up": "node-pg-migrate -m infra/migrations --envPath .env.development up",
+    "wait-for-postgres": "node ./infra/scripts/wait-for-postgres.js"
   },
   "author": "",
   "license": "MIT",
