@@ -9,10 +9,11 @@ function checkPostgresConnection() {
       checkPostgresConnection();
       return;
     }
-    console.log("🔴 Yes! Everything is working fine here  💪");
+    console.log(".\n");
+    console.log("--> Yes! Everything is working fine here ':)' \n");
   }
 }
 
-process.stdout.write("🟢 Waiting for postgres to accept connections.");
+process.stdout.write("--> Waiting for postgres to accept connections.\n");
 
 checkPostgresConnection();

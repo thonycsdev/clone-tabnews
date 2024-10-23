@@ -1,8 +1,9 @@
 import database from "infra/database";
-beforeAll(cleanDatabase);
-async function cleanDatabase() {
+import orchestrator from "tests/orchestrator";
+beforeAll(async () => {
   await database.query("drop schema public cascade; create schema public;");
-}
+  await orchestrator.waitForAllServices();
+});
 
 test("/api/v1/migrations/ POST should return 200", async () => {
   const response1 = await fetch("http://localhost:3000/api/v1/migrations", {
