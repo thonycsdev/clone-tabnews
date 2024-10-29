@@ -1,0 +1,16 @@
+name: Linters
+
+on: pull_request
+
+jobs:
+  prettier:
+    name: Prettier Checking
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v4
+        with:
+          node-version: lts/hydrogen
+
+      - run: npm ci
+      - run: npm lint:prettier:check
