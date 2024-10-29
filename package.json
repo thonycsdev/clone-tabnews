@@ -9,7 +9,7 @@
     "services:stop": "docker compose -f infra/compose.yaml stop",
     "services:down": "docker compose -f infra/compose.yaml down",
     "lint:prettier:check": "prettier --check .",
-    "lint:fix": "prettier --write .",
+    "lint:prettier:fix": "prettier --write .",
     "test": "npm run services:up && concurrently -n next,jest --hide next -k -s command-jest 'next dev' 'jest --runInBand --verbose'",
     "test:watch": "jest --watch --runInBand",
     "migrations:create": "node-pg-migrate --migrations-dir infra/migrations create",
