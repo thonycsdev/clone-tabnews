@@ -19,7 +19,8 @@ async function fetchStatusPage() {
 }
 
 async function retryErroLogMessage(err, attempt) {
-  console.error(`Error on attempt: ${attempt}. ${err.message}`);
+  console.log(`Error on attempt: ${attempt}. ${err.message}`);
 }
 
-export default { waitForAllServices };
+const orchestrator = { waitForAllServices };
+export default orchestrator;

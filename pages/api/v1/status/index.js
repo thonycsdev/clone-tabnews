@@ -1,6 +1,6 @@
 import database from "infra/database";
 
-async function status(request, response) {
+async function status(_, response) {
   const updatedAt = new Date().toISOString();
   const postgresVersion = await database.query("SELECT version()");
   const maxConnections = await database.query("SHOW max_connections");
