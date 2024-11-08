@@ -17,7 +17,8 @@
     "migrations:up": "node-pg-migrate -m infra/migrations --envPath .env.development up",
     "wait-for-postgres": "node ./infra/scripts/wait-for-postgres.js",
     "prepare": "husky",
-    "commit": "cz"
+    "commit": "cz",
+    "commit:check:content": "node ./check-files-in-commit.js"
   },
   "author": "",
   "license": "MIT",
