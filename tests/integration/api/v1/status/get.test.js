@@ -22,7 +22,7 @@ test("Get to /api/v1/status should return correct postgres version", async () =>
   const responseBody = await response.json();
   expect(responseBody.dependencies.database.postgres_version).toBeDefined();
   expect(responseBody.dependencies.database.postgres_version).toContain(
-    "PostgreSQL 16.0"
+    "PostgreSQL 16.0",
   );
 });
 test("Get to /api/v1/status should return the max connection number of the database", async () => {
@@ -30,7 +30,7 @@ test("Get to /api/v1/status should return the max connection number of the datab
   const responseBody = await response.json();
   expect(responseBody.dependencies.database.max_connections).toBeDefined();
   expect(responseBody.dependencies.database.max_connections).toBeGreaterThan(
-    50
+    50,
   );
 });
 test("Get to /api/v1/status should return the active connection of the database at this given moment", async () => {
