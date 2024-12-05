@@ -16,7 +16,7 @@ async function migrations(request, response) {
 
     const nodePGMigrateDefaultConfiguration = {
       dbClient: dbClient,
-      dir: path.join("infra", "migrations"),
+      dir: path.resolve("infra", "migrations"),
       dryRun: true,
       direction: "up",
       verbose: "true",
