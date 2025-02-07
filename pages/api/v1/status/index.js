@@ -16,7 +16,6 @@ export default router.handler({
 
 function noMatchHTTPMethodHandler(_, response) {
   const publicError = new MethodNotAllowed();
-  console.log({ publicError });
   return response.status(publicError.status).json(publicError);
 }
 
