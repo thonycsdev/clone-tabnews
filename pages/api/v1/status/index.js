@@ -1,4 +1,12 @@
 import database from "infra/database";
+import controller from "infra/controller";
+import { createRouter } from "next-connect";
+
+const router = createRouter();
+
+router.get(status);
+
+export default router.handler(controller.errorHandlers);
 
 async function status(_, response) {
   const updatedAt = new Date().toISOString();
@@ -20,5 +28,3 @@ async function status(_, response) {
     },
   });
 }
-
-export default status;

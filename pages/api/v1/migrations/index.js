@@ -1,49 +1,52 @@
 import database from "infra/database";
+import controller from "infra/controller";
 import path from "node:path";
 import NodePGMigrate from "node-pg-migrate";
-async function migrations(request, response) {
-  const allowedMethods = ["POST", "GET"];
-  if (!allowedMethods.includes(request.method)) {
-    return response.status(405).json({
-      error: `Method: ${request.method} not allowed`,
-    });
-  }
+import { createRouter } from "next-connect";
 
+const router = createRouter();
+
+router.get(postHandler);
+router.post(getHandler);
+
+export default router.handler(controller.errorHandlers);
+
+async function getHandler(_, response) {
   let dbClient;
+  dbClient = await database.getNewClient();
 
-  try {
-    dbClient = await database.getNewClient();
+  const nodePGMigrateDefaultConfiguration = {
+    dbClient: dbClient,
+    dir: path.resolve("infra", "migrations"),
+    dryRun: false,
+    direction: "up",
+    verbose: "true",
+    migrationsTable: "pgMigrations",
+  };
+  const migratedMigrations = await NodePGMigrate(
+    nodePGMigrateDefaultConfiguration,
+  );
 
-    const nodePGMigrateDefaultConfiguration = {
-      dbClient: dbClient,
-      dir: path.resolve("infra", "migrations"),
-      dryRun: true,
-      direction: "up",
-      verbose: "true",
-      migrationsTable: "pgMigrations",
-    };
-    if (request.method === "POST") {
-      const migratedMigrations = await NodePGMigrate({
-        ...nodePGMigrateDefaultConfiguration,
-        dryRun: false,
-      });
-
-      if (migratedMigrations.length > 0) {
-        return response.status(201).json(migratedMigrations);
-      }
-      return response.status(200).json(migratedMigrations);
-    }
-    if (request.method === "GET") {
-      const pendingMigrations = await NodePGMigrate({
-        ...nodePGMigrateDefaultConfiguration,
-      });
-      return response.status(200).json(pendingMigrations);
-    }
-  } catch (error) {
-    console.error(error);
-    throw error;
-  } finally {
-    await dbClient.end();
+  if (migratedMigrations.length > 0) {
+    return response.status(201).json(migratedMigrations);
   }
+  return response.status(200).json(migratedMigrations);
 }
-export default migrations;
+
+async function postHandler(_, response) {
+  let dbClient;
+  dbClient = await database.getNewClient();
+
+  const nodePGMigrateDefaultConfiguration = {
+    dbClient: dbClient,
+    dir: path.resolve("infra", "migrations"),
+    dryRun: true,
+    direction: "up",
+    verbose: "true",
+    migrationsTable: "pgMigrations",
+  };
+  const pendingMigrations = await NodePGMigrate(
+    nodePGMigrateDefaultConfiguration,
+  );
+  return response.status(200).json(pendingMigrations);
+}

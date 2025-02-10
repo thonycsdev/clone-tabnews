@@ -1,14 +1,20 @@
 import { Client } from "pg";
+import { ServiceError } from "./errors";
 
 async function query(queryObject) {
-  const client = await getNewClient();
+  let client;
   try {
+    client = await getNewClient();
     var result = await client.query(queryObject);
     return result;
   } catch (error) {
-    console.error(error);
+    const serviceError = new ServiceError({
+      message: "Erro no servico de banco de dados ou na query executada.",
+      cause: error,
+    });
+    throw serviceError;
   } finally {
-    await client.end();
+    await client?.end();
   }
 }
 
