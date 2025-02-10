@@ -1,28 +1,13 @@
 import database from "infra/database";
-import {
-  InternalServerError,
-  MethodsNotAllowed as MethodNotAllowed,
-} from "infra/errors";
+import controller from "infra/controller";
 import { createRouter } from "next-connect";
 
 const router = createRouter();
 
 router.get(status);
 
-export default router.handler({
-  onNoMatch: noMatchHTTPMethodHandler,
-  onError: internalErrorHandler,
-});
+export default router.handler(controller.errorHandlers);
 
-function noMatchHTTPMethodHandler(_, response) {
-  const publicError = new MethodNotAllowed();
-  return response.status(publicError.status).json(publicError);
-}
-
-function internalErrorHandler(error, _, response) {
-  const publicError = new InternalServerError(error);
-  return response.status(500).json(publicError);
-}
 async function status(_, response) {
   const updatedAt = new Date().toISOString();
   const postgresVersion = await database.query("SELECT version()");
