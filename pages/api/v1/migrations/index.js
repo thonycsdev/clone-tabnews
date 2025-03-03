@@ -12,17 +12,8 @@ router.post(getHandler);
 export default router.handler(controller.errorHandlers);
 
 async function getHandler(_, response) {
-  let dbClient;
-  dbClient = await database.getNewClient();
-
-  const nodePGMigrateDefaultConfiguration = {
-    dbClient: dbClient,
-    dir: path.resolve("infra", "migrations"),
-    dryRun: false,
-    direction: "up",
-    verbose: "true",
-    migrationsTable: "pgMigrations",
-  };
+  const nodePGMigrateDefaultConfiguration =
+    await getNodePGMigrationConfiguration();
   const migratedMigrations = await NodePGMigrate(
     nodePGMigrateDefaultConfiguration,
   );
@@ -34,19 +25,24 @@ async function getHandler(_, response) {
 }
 
 async function postHandler(_, response) {
+  const nodePGMigrateDefaultConfiguration =
+    await getNodePGMigrationConfiguration();
+  const pendingMigrations = await NodePGMigrate({
+    ...nodePGMigrateDefaultConfiguration,
+    dryRun: true,
+  });
+  return response.status(200).json(pendingMigrations);
+}
+
+async function getNodePGMigrationConfiguration() {
   let dbClient;
   dbClient = await database.getNewClient();
-
-  const nodePGMigrateDefaultConfiguration = {
+  return {
     dbClient: dbClient,
     dir: path.resolve("infra", "migrations"),
-    dryRun: true,
+    dryRun: false,
     direction: "up",
     verbose: "true",
     migrationsTable: "pgMigrations",
   };
-  const pendingMigrations = await NodePGMigrate(
-    nodePGMigrateDefaultConfiguration,
-  );
-  return response.status(200).json(pendingMigrations);
 }
