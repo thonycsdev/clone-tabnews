@@ -2,13 +2,16 @@ import database from "infra/database";
 import path from "node:path";
 import NodePGMigrate from "node-pg-migrate";
 
-async function runPendingMigrations({ isDryRun } = true) {
+async function runPendingMigrations({ isDryRun } = { isDryRun: true }) {
   const nodePGMigrateDefaultConfiguration =
     await getNodePGMigrationConfiguration();
   const migratedMigrations = await NodePGMigrate({
     ...nodePGMigrateDefaultConfiguration,
     dryRun: isDryRun,
   });
+
+  nodePGMigrateDefaultConfiguration.dbClient.end();
+
   return migratedMigrations;
 }
 
@@ -20,7 +23,7 @@ async function getNodePGMigrationConfiguration() {
     dir: path.resolve("infra", "migrations"),
     dryRun: false,
     direction: "up",
-    verbose: "true",
+    log: () => {},
     migrationsTable: "pgMigrations",
   };
 }
