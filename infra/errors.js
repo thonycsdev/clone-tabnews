@@ -40,3 +40,12 @@ export class MethodsNotAllowed extends BaseError {
     this.status_code = 405;
   }
 }
+
+export class ValidationError extends BaseError {
+  constructor({ message, action }) {
+    super(message ?? "Um erro de validacao ocorreu.", action);
+    this.name = "ValidationError";
+    this.action = action ?? "Verifique a disponibilidade do servico.";
+    this.status_code = 400;
+  }
+}

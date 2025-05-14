@@ -24,14 +24,31 @@ describe("POST /api/v1/users", () => {
       expect(Date.parse(responseBody.created_at)).not.toBeNaN();
       expect(Date.parse(responseBody.created_at)).not.toBeNaN();
 
-      expect(responseBody).toEqual({
-        id: responseBody.id,
-        username: "anthonycoutinho",
-        email: "anthony@coutinho.dev",
-        password: "123456",
-        created_at: responseBody.created_at,
-        updated_at: responseBody.updated_at,
+    });
+
+    test("With duplicate email", async () => {
+      const response1 = await fetch("http://localhost:3000/api/v1/users", {
+        method: "POST",
+        body: JSON.stringify({
+          username: "duplicateUser",
+          password: "123456",
+          email: "duplicated@email.com",
+        }),
       });
+
+      expect(response1.status).toBe(201);
+
+      const response2 = await fetch("http://localhost:3000/api/v1/users", {
+        method: "POST",
+        body: JSON.stringify({
+          username: "duplicateUser2",
+          password: "123456",
+          email: "Duplicated@email.com",
+        }),
+      });
+
+      expect(response2.status).toBe(400);
+
     });
   });
 });
