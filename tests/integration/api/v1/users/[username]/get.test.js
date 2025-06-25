@@ -10,6 +10,7 @@ describe("GET /api/v1/users/[username]", () => {
   describe("Anonymous User", () => {
     describe("Exact Match", () => {
       test("Existing Username", async () => {
+        //Cria um usuario no banco
         const response1 = await fetch("http://localhost:3000/api/v1/users", {
           method: "POST",
           body: JSON.stringify({
@@ -19,7 +20,7 @@ describe("GET /api/v1/users/[username]", () => {
           }),
         });
         expect(response1.status).toBe(201);
-
+        //Busca o nome `user_username` na api
         const result = await fetch(
           "http://localhost:3000/api/v1/users/user_username",
         );
@@ -33,6 +34,7 @@ describe("GET /api/v1/users/[username]", () => {
       });
     });
     describe("Unmatched Case", () => {
+      //Cadastra um usuario com case
       test("Existing Username", async () => {
         const response1 = await fetch("http://localhost:3000/api/v1/users", {
           method: "POST",
@@ -44,6 +46,7 @@ describe("GET /api/v1/users/[username]", () => {
         });
         expect(response1.status).toBe(201);
 
+        //Busca o usuario com um case diferente do que foi cadastrado
         const result = await fetch(
           "http://localhost:3000/api/v1/users/unMatched",
         );
@@ -55,6 +58,15 @@ describe("GET /api/v1/users/[username]", () => {
         expect(Date.parse(responseBody.created_at)).not.toBeNaN();
         expect(Date.parse(responseBody.created_at)).not.toBeNaN();
       });
+    });
+    test("With nonexistent username", async () => {
+      const response = await fetch(
+        "http://localhost:3000/api/v1/users/random_name",
+      );
+      expect(response.status).toBe(404);
+      const responseBody = await response.json();
+
+      expect(responseBody.message).toBe("username nao encontrado");
     });
   });
 });

@@ -1,5 +1,5 @@
 import database from "infra/database";
-import { ValidationError } from "infra/errors";
+import { NotFoundError, ValidationError } from "infra/errors";
 async function create(userDataRequest) {
   await validateEmail(userDataRequest);
   await validateUserName(userDataRequest);
@@ -25,6 +25,12 @@ async function findOneByUsername(username) {
     `,
       values: [username],
     });
+
+    if (result.rowCount == 0) {
+      throw new NotFoundError({
+        message: "username nao encontrado",
+      });
+    }
 
     return result.rows[0];
   }
