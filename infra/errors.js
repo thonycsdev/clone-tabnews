@@ -40,6 +40,14 @@ export class MethodsNotAllowed extends BaseError {
     this.status_code = 405;
   }
 }
+export class NotFoundError extends BaseError {
+  constructor({ message, action }) {
+    super(message ?? "O que foi buscado, nao foi encontrato.", action);
+    this.name = "NotFoundError";
+    this.action = action ?? "Verifique as dados fornecidos.";
+    this.status_code = 404;
+  }
+}
 
 export class ValidationError extends BaseError {
   constructor({ message, action }) {
