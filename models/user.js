@@ -6,7 +6,6 @@ async function create(userDataRequest) {
   const newUser = await runInserQuery(userDataRequest);
   return newUser;
 }
-
 async function findOneByUsername(username) {
   const user = await runSelectQuery(username);
   return user;
@@ -57,7 +56,6 @@ async function validateUserName(userDataRequest) {
     });
   }
 }
-
 async function validateEmail(userDataRequest) {
   const result = await database.query({
     text: `
