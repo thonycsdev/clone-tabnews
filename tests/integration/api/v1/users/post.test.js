@@ -96,9 +96,7 @@ describe("POST /api/v1/users", () => {
 
       const responseBody2 = await response2.json();
       expect(responseBody2.name).toBe("ValidationError");
-      expect(responseBody2.message).toBe(
-        "O username utilizado ja foi cadastrado.",
-      );
+      expect(responseBody2.message).toBe("Username não disponível.");
       expect(responseBody2.action).toBe(
         "Utilize outro username que nao tenha sido cadastrado anteriormente.",
       );
