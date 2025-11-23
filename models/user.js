@@ -1,10 +1,31 @@
 import database from "infra/database";
+import password from "models/password.js";
 import { NotFoundError, ValidationError } from "infra/errors";
 async function create(userDataRequest) {
   await validateEmail(userDataRequest);
   await validateUserName(userDataRequest);
+  await hashPasswordInObject(userDataRequest);
   const newUser = await runInserQuery(userDataRequest);
   return newUser;
+}
+async function update(username, userInputData) {
+  const user = await findOneByUsername(username);
+  if ("username" in userInputData) {
+    await validateUserName(userInputData);
+  }
+  if ("email" in userInputData) {
+    await validateEmail(userInputData);
+  }
+  if ("password" in userInputData) {
+    await hashPasswordInObject(userInputData);
+  }
+
+  const userWithNewValues = { ...user, ...userInputData };
+  const updatedUser = await runUpdateQuery(userWithNewValues);
+  return updatedUser;
+}
+async function hashPasswordInObject(userDataRequest) {
+  userDataRequest.password = await password.hash(userDataRequest.password);
 }
 async function findOneByUsername(username) {
   const user = await runSelectQuery(username);
@@ -34,8 +55,7 @@ async function findOneByUsername(username) {
     return result.rows[0];
   }
 }
-
-async function validateUserName(userDataRequest) {
+async function validateUserName(userInputData) {
   const result = await database.query({
     text: `
       SELECT
@@ -46,11 +66,11 @@ async function validateUserName(userDataRequest) {
         LOWER(u.username) = LOWER($1)
       
     `,
-    values: [userDataRequest.username],
+    values: [userInputData.username],
   });
   if (result.rowCount > 0) {
     throw new ValidationError({
-      message: "O username utilizado ja foi cadastrado.",
+      message: "Username não disponível.",
       action:
         "Utilize outro username que nao tenha sido cadastrado anteriormente.",
     });
@@ -77,7 +97,6 @@ async function validateEmail(userDataRequest) {
     });
   }
 }
-
 async function runInserQuery(userDataRequest) {
   const result = await database.query({
     text: `
@@ -96,6 +115,31 @@ async function runInserQuery(userDataRequest) {
   });
   return result.rows[0];
 }
+async function runUpdateQuery(userWithNewValues) {
+  const result = await database.query({
+    text: `
+    UPDATE
+      users
+    SET
+      username = $2,
+      email = $3,
+      password = $4,
+      updated_at = timezone('utc', now())
+    WHERE 
+      id = $1
+    RETURNING
+      *
+    ;
+    `,
+    values: [
+      userWithNewValues.id,
+      userWithNewValues.username,
+      userWithNewValues.email,
+      userWithNewValues.password,
+    ],
+  });
+  return result.rows[0];
+}
 
-const user = { create, findOneByUsername };
+const user = { create, findOneByUsername, update };
 export default user;

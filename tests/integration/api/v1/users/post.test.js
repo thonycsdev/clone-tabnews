@@ -1,5 +1,6 @@
 import orchestrator from "tests/orchestrator";
-import { version as uuidVersion } from "uuid";
+import user from "models/user.js";
+import password from "models/password.js";
 beforeAll(async () => {
   await orchestrator.waitForAllServices();
   await orchestrator.resetDatabase();
@@ -20,9 +21,21 @@ describe("POST /api/v1/users", () => {
 
       expect(response.status).toBe(201);
       const responseBody = await response.json();
-      expect(uuidVersion(responseBody.id)).toBe(4);
-      expect(Date.parse(responseBody.created_at)).not.toBeNaN();
-      expect(Date.parse(responseBody.created_at)).not.toBeNaN();
+      expect(responseBody).toEqual({
+        id: responseBody.id,
+        username: "anthonycoutinho",
+        email: "anthony@coutinho.dev",
+        password: responseBody.password,
+        created_at: responseBody.created_at,
+        updated_at: responseBody.updated_at,
+      });
+
+      const storedUser = await user.findOneByUsername("anthonycoutinho");
+      const correctPassword = await password.compare(
+        "123456",
+        storedUser.password,
+      );
+      expect(correctPassword).toBe(true);
     });
 
     test("With duplicate email", async () => {
@@ -83,9 +96,7 @@ describe("POST /api/v1/users", () => {
 
       const responseBody2 = await response2.json();
       expect(responseBody2.name).toBe("ValidationError");
-      expect(responseBody2.message).toBe(
-        "O username utilizado ja foi cadastrado.",
-      );
+      expect(responseBody2.message).toBe("Username não disponível.");
       expect(responseBody2.action).toBe(
         "Utilize outro username que nao tenha sido cadastrado anteriormente.",
       );
