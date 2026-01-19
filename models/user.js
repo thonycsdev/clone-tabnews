@@ -45,7 +45,6 @@ async function findOneByUsername(username) {
     `,
       values: [username],
     });
-
     if (result.rowCount == 0) {
       throw new NotFoundError({
         message: "username nao encontrado",

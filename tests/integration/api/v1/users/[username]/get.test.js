@@ -11,15 +11,11 @@ describe("GET /api/v1/users/[username]", () => {
     describe("Exact Match", () => {
       test("Existing Username", async () => {
         //Cria um usuario no banco
-        const response1 = await fetch("http://localhost:3000/api/v1/users", {
-          method: "POST",
-          body: JSON.stringify({
-            username: "user_username",
-            password: "123456",
-            email: "email@email.com",
-          }),
+        await orchestrator.createUser({
+          username: "user_username",
+          password: "123456",
+          email: "email@email.com",
         });
-        expect(response1.status).toBe(201);
         //Busca o nome `user_username` na api
         const result = await fetch(
           "http://localhost:3000/api/v1/users/user_username",
@@ -36,16 +32,11 @@ describe("GET /api/v1/users/[username]", () => {
     describe("Unmatched Case", () => {
       //Cadastra um usuario com case
       test("Existing Username", async () => {
-        const response1 = await fetch("http://localhost:3000/api/v1/users", {
-          method: "POST",
-          body: JSON.stringify({
-            username: "Unmatched",
-            password: "123456",
-            email: "Unmatched@email.com",
-          }),
+        await orchestrator.createUser({
+          username: "Unmatched",
+          password: "123456",
+          email: "Unmatched@email.com",
         });
-        expect(response1.status).toBe(201);
-
         //Busca o usuario com um case diferente do que foi cadastrado
         const result = await fetch(
           "http://localhost:3000/api/v1/users/unMatched",
