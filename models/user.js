@@ -27,6 +27,34 @@ async function update(username, userInputData) {
 async function hashPasswordInObject(userDataRequest) {
   userDataRequest.password = await password.hash(userDataRequest.password);
 }
+async function findOneByEmail(email) {
+  const user = await runSelectQuery(email);
+  return user;
+
+  async function runSelectQuery(email) {
+    const result = await database.query({
+      text: `
+      SELECT
+        *
+      FROM
+        users u
+      WHERE
+        LOWER(u.email) = LOWER($1)
+      LIMIT
+        1;
+    `,
+      values: [email],
+    });
+    if (result.rowCount == 0) {
+      throw new NotFoundError({
+        error: "Os dados de autenticação não conferem",
+        message: "email nao encontrado",
+      });
+    }
+
+    return result.rows[0];
+  }
+}
 async function findOneByUsername(username) {
   const user = await runSelectQuery(username);
   return user;
@@ -140,5 +168,5 @@ async function runUpdateQuery(userWithNewValues) {
   return result.rows[0];
 }
 
-const user = { create, findOneByUsername, update };
+const user = { create, findOneByUsername, update, findOneByEmail };
 export default user;
