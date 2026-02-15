@@ -1,5 +1,6 @@
 import { faker } from "@faker-js/faker/.";
 import orchestrator from "tests/orchestrator";
+import setCookieParse from "set-cookie-parser";
 
 beforeAll(async () => {
   await orchestrator.waitForAllServices();
@@ -102,17 +103,26 @@ describe("POST /api/v1/sessions", () => {
         user_id: createdUser.id,
         updated_at: responseBody.updated_at,
         created_at: responseBody.created_at,
-        expires_at: responseBody.expires_at
-      })
+        expires_at: responseBody.expires_at,
+      });
       const TIME_TO_ADD_TO_EXPIRATION_DATE = 60 * 60 * 24 * 30 * 1000; // 30 Days
-      const createdAt = new Date(responseBody.created_at)
-      createdAt.setMilliseconds(0)
-      createdAt.setSeconds(0)
+      const createdAt = new Date(responseBody.created_at);
+      createdAt.setMilliseconds(0);
+      createdAt.setSeconds(0);
 
-            const expiresAt = new Date(responseBody.expires_at)
-      expiresAt.setMilliseconds(0)
-      expiresAt.setSeconds(0)
-      expect(expiresAt - createdAt).toBe(TIME_TO_ADD_TO_EXPIRATION_DATE)
+      const expiresAt = new Date(responseBody.expires_at);
+      expiresAt.setMilliseconds(0);
+      expiresAt.setSeconds(0);
+      expect(expiresAt - createdAt).toBe(TIME_TO_ADD_TO_EXPIRATION_DATE);
+      const cookie = setCookieParse(response, { map: true });
+      expect(cookie.session_id.name).toBe("session_id");
+      expect(cookie.session_id).toEqual({
+        name: "session_id",
+        value: responseBody.token,
+        path: "/",
+        maxAge: TIME_TO_ADD_TO_EXPIRATION_DATE,
+        secure: true,
+      });
     });
   });
 });

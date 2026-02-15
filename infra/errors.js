@@ -23,10 +23,9 @@ export class ServiceError extends BaseError {
   }
 }
 
-
 export class UnauthorizedError extends BaseError {
   constructor({ cause, status_code, message, action }) {
-    super( message || "Um erro de autorização aconteceu", {
+    super(message || "Um erro de autorização aconteceu", {
       cause,
     });
     this.name = "UnauthorizedError";

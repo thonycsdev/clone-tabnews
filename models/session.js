@@ -15,9 +15,8 @@ async function create(userId) {
             `,
       values: [token, userId, expirationDate],
     });
-    console.log({sessionRow})
     return sessionRow.rows[0];
   }
 }
-const session = { create };
+const session = { create, TIME_TO_ADD_TO_EXPIRATION_DATE };
 export default session;
