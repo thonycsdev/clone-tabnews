@@ -22,6 +22,17 @@ export class ServiceError extends BaseError {
     this.status_code = 503;
   }
 }
+
+export class UnauthorizedError extends BaseError {
+  constructor({ cause, status_code, message, action }) {
+    super(message || "Um erro de autorização aconteceu", {
+      cause,
+    });
+    this.name = "UnauthorizedError";
+    this.action = action || "Verifique os dados informados";
+    this.status_code = status_code || 401;
+  }
+}
 export class InternalServerError extends BaseError {
   constructor({ cause, status_code }) {
     super("Um erro interno aconteceu!", {
