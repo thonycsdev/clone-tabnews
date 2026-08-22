@@ -18,7 +18,7 @@ describe("GET /api/v1/users/[username]", () => {
         });
         //Busca o nome `user_username` na api
         const result = await fetch(
-          "http://localhost:3000/api/v1/users/user_username",
+          "http://localhost:3000/api/v1/user/user_username",
         );
         expect(result.status).toBe(200);
         const responseBody = await result.json();
@@ -39,7 +39,7 @@ describe("GET /api/v1/users/[username]", () => {
         });
         //Busca o usuario com um case diferente do que foi cadastrado
         const result = await fetch(
-          "http://localhost:3000/api/v1/users/unMatched",
+          "http://localhost:3000/api/v1/user/unMatched",
         );
         expect(result.status).toBe(200);
         const responseBody = await result.json();
@@ -52,7 +52,7 @@ describe("GET /api/v1/users/[username]", () => {
     });
     test("With nonexistent username", async () => {
       const response = await fetch(
-        "http://localhost:3000/api/v1/users/random_name",
+        "http://localhost:3000/api/v1/user/random_name",
       );
       expect(response.status).toBe(404);
       const responseBody = await response.json();

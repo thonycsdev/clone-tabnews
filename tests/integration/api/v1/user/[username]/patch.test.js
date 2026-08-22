@@ -11,7 +11,7 @@ describe("PATCH /api/v1/users/[username]", () => {
   describe("Anonymous User", () => {
     test("With nonexistent 'username'", async () => {
       const response = await fetch(
-        "http://localhost:3000/api/v1/users/usuario-inexistente",
+        "http://localhost:3000/api/v1/user/usuario-inexistente",
         { method: `PATCH` },
       );
       expect(response.status).toBe(404);
@@ -27,7 +27,7 @@ describe("PATCH /api/v1/users/[username]", () => {
         username: "user2",
       });
 
-      const response = await fetch("http://localhost:3000/api/v1/users/user2", {
+      const response = await fetch("http://localhost:3000/api/v1/user/user2", {
         method: `PATCH`,
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ username: "user1" }),
@@ -42,7 +42,7 @@ describe("PATCH /api/v1/users/[username]", () => {
       const { username } = await orchestrator.createUser();
 
       const response = await fetch(
-        `http://localhost:3000/api/v1/users/${username}`,
+        `http://localhost:3000/api/v1/user/${username}`,
         {
           method: `PATCH`,
           headers: { "Content-Type": "application/json" },
@@ -59,7 +59,7 @@ describe("PATCH /api/v1/users/[username]", () => {
         await orchestrator.createUser();
 
       const response = await fetch(
-        `http://localhost:3000/api/v1/users/${username}`,
+        `http://localhost:3000/api/v1/user/${username}`,
         {
           method: `PATCH`,
           headers: { "Content-Type": "application/json" },
@@ -84,7 +84,7 @@ describe("PATCH /api/v1/users/[username]", () => {
       const { username, email } = await orchestrator.createUser();
 
       const response = await fetch(
-        `http://localhost:3000/api/v1/users/${username}`,
+        `http://localhost:3000/api/v1/user/${username}`,
         {
           method: `PATCH`,
           headers: { "Content-Type": "application/json" },

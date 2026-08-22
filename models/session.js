@@ -1,6 +1,8 @@
 import database from "infra/database";
-const TIME_TO_ADD_TO_EXPIRATION_DATE = 60 * 60 * 24 * 30 * 1000; // 30 Days
+import { UnauthorizedError } from "infra/errors";
 import crypto from "node:crypto";
+const TIME_TO_ADD_TO_EXPIRATION_DATE = 60 * 60 * 24 * 30 * 1000; // 30 Days
+
 async function create(userId) {
   const token = crypto.randomBytes(48).toString("hex");
   const expirationDate = new Date(Date.now() + TIME_TO_ADD_TO_EXPIRATION_DATE);
@@ -18,5 +20,35 @@ async function create(userId) {
     return sessionRow.rows[0];
   }
 }
-const session = { create, TIME_TO_ADD_TO_EXPIRATION_DATE };
+
+async function findOneValidByToken(sessionToken) {
+  const sessionFound = await runSelectQuery(sessionToken);
+  return sessionFound;
+
+  async function runSelectQuery(sessionToken) {
+    const results = await database.query({
+      text: `
+        SELECT 
+        *
+        FROM
+          sessions
+        WHERE
+          token = $1
+          AND expires_at > NOW()
+        LIMIT
+          1
+        ;
+      `,
+      values: [sessionToken],
+    });
+    if (results.rowCount == 0) {
+      throw new UnauthorizedError({
+        message: "Usuário não possui sessão ativa.",
+        action: "Verifique se este usuário está logado e tente novamente.",
+      });
+    }
+    return results.rows[0];
+  }
+}
+const session = { create, findOneValidByToken, TIME_TO_ADD_TO_EXPIRATION_DATE };
 export default session;

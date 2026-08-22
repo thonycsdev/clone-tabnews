@@ -82,6 +82,34 @@ async function findOneByUsername(username) {
     return result.rows[0];
   }
 }
+async function findOneById(id) {
+  const userFound = await runSelectQuery(id);
+  return userFound;
+
+  async function runSelectQuery(id) {
+    const result = await database.query({
+      text: `
+      SELECT
+        *
+      FROM
+        users u
+      WHERE
+        u.id = $1
+      LIMIT
+        1;
+    `,
+      values: [id],
+    });
+    if (result.rowCount == 0) {
+      throw new NotFoundError({
+        error: "Usuário não encontrado",
+        message: "ID Inválido",
+      });
+    }
+
+    return result.rows[0];
+  }
+}
 async function validateUserName(userInputData) {
   const result = await database.query({
     text: `
@@ -168,5 +196,5 @@ async function runUpdateQuery(userWithNewValues) {
   return result.rows[0];
 }
 
-const user = { create, findOneByUsername, update, findOneByEmail };
+const user = { create, findOneByUsername, update, findOneByEmail, findOneById };
 export default user;
